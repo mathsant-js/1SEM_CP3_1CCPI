@@ -3,7 +3,7 @@ name: Atualizar Histórico de Commits no README
 on:
   push:
     branches:
-      - main # Mude para master se o seu repositório usar master
+      - main
   workflow_dispatch:
 
 permissions:
@@ -12,40 +12,64 @@ permissions:
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Baixa todo o histórico de commits
+          fetch-depth: 0
 
-      - name: Gerar histórico e injetar no README
+      - name: Configurar Git
         run: |
-          # 1. Configura as credenciais temporárias do Git Bot
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          # 2. Coleta os últimos 30 commits formatados em Markdown
-          COMMITS=$(git log --pretty=format:"* %h - %an: %s (%cr)" -n 30)
-          
-          # 3. Reescreve o README inserindo os commits entre as tags de marcação
-          # Usa o node para fazer a substituição de forma segura contra quebras de linha
+
+      - name: Gerar histórico de commits
+        run: |
+          echo "COMMITS_LIST<<EOF" >> $GITHUB_ENV
+          git log --pretty=format:"* %h - %an: %s (%cr)" -n 30 >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Atualizar README
+        run: |
           node -e "
             const fs = require('fs');
-            let readme = fs.readFileSync('README.md', 'utf8');
+
+            const readmePath = 'README.md';
             const startTag = '<!--START_SECTION:commit_history-->';
             const endTag = '<!--END_SECTION:commit_history-->';
-            const regex = new RegExp(startTag + '[\\\\s\\\\S]*?' + endTag);
-            const content = startTag + '\\n' + process.env.COMMITS_LIST + '\\n' + endTag;
-            fs.writeFileSync('README.md', readme.replace(regex, content));
-          "
-        env:
-          COMMITS_LIST: ${{ env.COMMITS }}
 
-      - name: Commit e Push das alterações
+            let readme = fs.readFileSync(readmePath, 'utf8');
+
+            const regex = new RegExp(
+              startTag + '[\\\\s\\\\S]*?' + endTag
+            );
+
+            const newContent =
+              startTag +
+              '\n' +
+              process.env.COMMITS_LIST +
+              '\n' +
+              endTag;
+
+            if (!regex.test(readme)) {
+              throw new Error(
+                'Tags de commit history não encontradas no README.md'
+              );
+            }
+
+            readme = readme.replace(regex, newContent);
+
+            fs.writeFileSync(readmePath, readme);
+          "
+
+      - name: Commit e Push
         run: |
-          # Só faz o commit se houver modificações reais no README
-          if ! git diff --exit-code README.md; then
+          if ! git diff --quiet; then
             git add README.md
-            git commit -m "docs: atualizado histórico de commits no README [skip ci]"
+            git commit -m "docs: atualizar histórico de commits [skip ci]"
             git push
+          else
+            echo "Nenhuma alteração detectada."
           fi
