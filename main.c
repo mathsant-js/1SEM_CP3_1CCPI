@@ -21,6 +21,17 @@ int saque_aprovado(float valor_saque, float saldo){
 }
 
 
+void exibirMenu() {
+printf(" ----------  Bem vindo ao Nunbank  :)  -------- \n");
+printf("Menu de opcoes:\n");
+printf("=====================\n");
+printf("1 - Consultar Saldo\n");
+printf("2 - Realizar Saque\n");
+printf("3 - Realizar Deposito\n");
+printf("0 - Sair\n");
+printf("=======================\n");
+
+}
 
 void consultarSaldo(float saldo) {
     printf("\n--- SALDO ATUAL ---\n");
