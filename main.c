@@ -8,6 +8,7 @@ void opcoes(int opcao, float saldo);
 void consultar_saldo(float saldo);
 int limite_diario(float saldo);
 int saque_aprovado(float valor_saque, float saldo);
+int eh_positivo(float saldo);
 float realizar_saque(float saldo);
 float realizar_deposito(float saldo);
 void sair_programa();
@@ -51,6 +52,10 @@ int limite_diario(float valor_saque){
 
 int saque_aprovado(float valor_saque, float saldo){
     return valor_saque <= saldo && valor_saque > 0;
+}
+
+int eh_positivo(float saldo) {
+    return saldo > 0;
 }
 
 void exibir_menu() {
@@ -106,11 +111,11 @@ float realizar_deposito(float saldo) {
     float valor;
     printf("Digite o valor depositado: ");
     scanf("%f", &valor);
-    if (valor > 0) {
+    if (eh_positivo(valor)) {
         saldo += valor;
-        printf("Depósito realizado!\n");
+        printf("Deposito realizado!\n");
     } else {
-        printf("Valor inválido\n");
+        printf("Valor invalido\n");
     }
     return saldo;
 }
