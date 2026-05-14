@@ -7,6 +7,7 @@ void exibir_menu();
 void opcoes(int opcao, float saldo);
 void consultar_saldo(float saldo);
 int limite_diario(float saldo);
+int saque_aprovado(float valor_saque, float saldo);
 float realizar_saque(float saldo);
 float realizar_deposito(float saldo);
 void sair_programa();
@@ -35,7 +36,7 @@ float realizar_saque(float saldo) {
     scanf("%f", &valor_saque);
     if (limite_diario(valor_saque)) {
         printf("Limite diário excedido\n");        
-    } else if (valor_saque <= saldo && valor_saque > 0) {
+    } else if (saque_aprovado(valor_saque, saldo)) {
         saldo  -= valor_saque;
         printf("saque realizado! \n");
     } else {
@@ -47,12 +48,10 @@ float realizar_saque(float saldo) {
 int limite_diario(float valor_saque){
     return valor_saque >10000;
 }
-int saque_aprovado(float valor_saque, float saldo){
-    int teste = valor_saque <= saldo && valor_saque > 0;
-    printf("%d", teste);
-    return teste;
-}
 
+int saque_aprovado(float valor_saque, float saldo){
+    return valor_saque <= saldo && valor_saque > 0;
+}
 
 void exibir_menu() {
     printf(" ----------  Bem vindo ao Nunbank  :)  -------- \n");
