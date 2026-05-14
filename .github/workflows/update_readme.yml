@@ -1,14 +1,11 @@
 name: Atualizar Histórico de Commits no README
 
 on:
-  # Dispara a automação a cada novo commit enviado para a branch principal
   push:
     branches:
-      - main
-  # Permite que você rode a automação manualmente pela aba "Actions" se quiser
+      - main # Mude para master se o seu repositório usar master
   workflow_dispatch:
 
-# Garante permissão de escrita para que a Action possa modificar e salvar o README
 permissions:
   contents: write
 
@@ -16,17 +13,39 @@ jobs:
   update-readme:
     runs-on: ubuntu-latest
     steps:
-      # 1. Faz o clone do seu repositório na máquina virtual do GitHub
       - name: Checkout do repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Busca todo o histórico (necessário para listar os commits)
+          fetch-depth: 0 # Baixa todo o histórico de commits
 
-      # 2. Executa a Action que coleta os commits e atualiza o README
-      - name: Atualizar histórico no README
-        uses: gautamkrishnar/readme-commit-history-action@master
-        with:
-          # Token padrão do GitHub para autorizar a alteração no repositório
-          gh_token: ${{ secrets.GITHUB_TOKEN }}
-          # Quantidade de commits que você quer exibir no histórico
-          max_commits: 30
+      - name: Gerar histórico e injetar no README
+        run: |
+          # 1. Configura as credenciais temporárias do Git Bot
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 2. Coleta os últimos 30 commits formatados em Markdown
+          COMMITS=$(git log --pretty=format:"* %h - %an: %s (%cr)" -n 30)
+          
+          # 3. Reescreve o README inserindo os commits entre as tags de marcação
+          # Usa o node para fazer a substituição de forma segura contra quebras de linha
+          node -e "
+            const fs = require('fs');
+            let readme = fs.readFileSync('README.md', 'utf8');
+            const startTag = '<!--START_SECTION:commit_history-->';
+            const endTag = '<!--END_SECTION:commit_history-->';
+            const regex = new RegExp(startTag + '[\\\\s\\\\S]*?' + endTag);
+            const content = startTag + '\\n' + process.env.COMMITS_LIST + '\\n' + endTag;
+            fs.writeFileSync('README.md', readme.replace(regex, content));
+          "
+        env:
+          COMMITS_LIST: ${{ env.COMMITS }}
+
+      - name: Commit e Push das alterações
+        run: |
+          # Só faz o commit se houver modificações reais no README
+          if ! git diff --exit-code README.md; then
+            git add README.md
+            git commit -m "docs: atualizado histórico de commits no README [skip ci]"
+            git push
+          fi
