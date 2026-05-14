@@ -2,17 +2,24 @@ float realizar_saque(float saldo) {
 float valor_saque;
 printf("Valor do saque: ");
 scanf("%f", &valor_saque);
-if(valor_saque >10000){
+if(limite_diario(valor_saque)){
 print("Limite diário excedido\n");        
-} else if(valor_saque <= saldo && valor_saque > 0) {
+} else if( saque_aprovado(valor_saque, saldo)) {
 saldo  -= valor_saque;
 printf("saque realizado! \n");
 } else {
 print ("saldo insuficiente ou valor invalido! \n");
 }
-
 return saldo;
 }
+
+int limite_diario(float valor_saque){
+    return valor_saque >10000;
+}
+int saque_aprovado(float valor_saque, float saldo){
+    return valor_saque <= saldo && valor_saque > 0;
+}
+
 
 
 void consultarSaldo(float saldo) {
