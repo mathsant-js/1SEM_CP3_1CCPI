@@ -66,4 +66,5 @@ Basta digitar o número da opção desejada e pressionar Enter.
 
 ## Histórico de Commits
 <!--START_SECTION:commit_history-->
+
 <!--END_SECTION:commit_history-->
