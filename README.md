@@ -4,11 +4,12 @@
 
 | Nome | RM |
 |------|----|
-| Guilherme Vinciguerra Carvalho | 571951 |
-| Matheus Jorge Santana | 574166 |
 | Bernardo Zauza Amorim | 568808 |
+| Bruno Almeida | 572648 |
 | Gabriel Góes Nunes Pereira | 571735 |
+| Guilherme Vinciguerra Carvalho | 571951 |
 | Marcos Peterson | 573857 |
+| Matheus Jorge Santana | 574166 |
 
 ## Descrição do Sistema
 
