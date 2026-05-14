@@ -5,11 +5,11 @@ void limpar_cmd();
 void exibir_menu();
 void opcoes(int opcao, float saldo);
 void consultar_saldo(float saldo);
+float realizar_saque(float saldo);
+float realizar_deposito(float saldo);
 int limite_diario(float saldo);
 int saque_aprovado(float valor_saque, float saldo);
 int eh_positivo(float saldo);
-float realizar_saque(float saldo);
-float realizar_deposito(float saldo);
 void sair_programa();
 
 int main() {
@@ -30,33 +30,6 @@ void limpar_cmd() {
     }
 }
 
-float realizar_saque(float saldo) {
-    float valor_saque;
-    printf("Valor do saque: ");
-    scanf("%f", &valor_saque);
-    if (limite_diario(valor_saque)) {
-        printf("Limite diário excedido\n");        
-    } else if (saque_aprovado(valor_saque, saldo)) {
-        saldo  -= valor_saque;
-        printf("saque realizado! \n");
-    } else {
-        printf("saldo insuficiente ou valor invalido! \n");
-    }
-    return saldo;
-}
-
-int limite_diario(float valor_saque){
-    return valor_saque >10000;
-}
-
-int saque_aprovado(float valor_saque, float saldo){
-    return valor_saque <= saldo && valor_saque > 0;
-}
-
-int eh_positivo(float saldo) {
-    return saldo > 0;
-}
-
 void exibir_menu() {
     printf(" ----------  Bem vindo ao Nunbank  :)  -------- \n");
     printf("Menu de opcoes:\n");
@@ -66,12 +39,6 @@ void exibir_menu() {
     printf("3 - Realizar Deposito\n");
     printf("0 - Sair\n");
     printf("=======================\n");
-}
-
-void consultar_saldo(float saldo) {
-    printf("\n--- SALDO ATUAL ---\n");
-    printf("R$ %.2f\n", saldo);
-    printf("-------------------\n");
 }
 
 void opcoes(int opcao, float saldo) {
@@ -106,6 +73,27 @@ void opcoes(int opcao, float saldo) {
     }
 }
 
+void consultar_saldo(float saldo) {
+    printf("\n--- SALDO ATUAL ---\n");
+    printf("R$ %.2f\n", saldo);
+    printf("-------------------\n");
+}
+
+float realizar_saque(float saldo) {
+    float valor_saque;
+    printf("Valor do saque: ");
+    scanf("%f", &valor_saque);
+    if (limite_diario(valor_saque)) {
+        printf("Limite diário excedido\n");        
+    } else if (saque_aprovado(valor_saque, saldo)) {
+        saldo  -= valor_saque;
+        printf("saque realizado! \n");
+    } else {
+        printf("saldo insuficiente ou valor invalido! \n");
+    }
+    return saldo;
+}
+
 float realizar_deposito(float saldo) {
     float valor;
     printf("Digite o valor depositado: ");
@@ -117,6 +105,18 @@ float realizar_deposito(float saldo) {
         printf("Valor invalido\n");
     }
     return saldo;
+}
+
+int limite_diario(float valor_saque){
+    return valor_saque >10000;
+}
+
+int saque_aprovado(float valor_saque, float saldo){
+    return valor_saque <= saldo && valor_saque > 0;
+}
+
+int eh_positivo(float saldo) {
+    return saldo > 0;
 }
 
 void sair_programa() {
