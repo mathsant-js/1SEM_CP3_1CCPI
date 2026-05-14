@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void limpar_cmd();
 void exibir_menu();
@@ -20,17 +21,25 @@ int main() {
     return 0;
 }
 
+void limpar_cmd() {
+    if (_WIN32) {
+        system("cls");
+    } else {
+        system("clear");
+    }
+}
+
 float realizar_saque(float saldo) {
     float valor_saque;
     printf("Valor do saque: ");
     scanf("%f", &valor_saque);
-    if(limite_diario(valor_saque)){
-    printf("Limite diário excedido\n");        
+    if (limite_diario(valor_saque)) {
+        printf("Limite diário excedido\n");        
     } else if (valor_saque <= saldo && valor_saque > 0) {
         saldo  -= valor_saque;
         printf("saque realizado! \n");
     } else {
-    printf("saldo insuficiente ou valor invalido! \n");
+        printf("saldo insuficiente ou valor invalido! \n");
     }
     return saldo;
 }
@@ -60,26 +69,35 @@ void consultar_saldo(float saldo) {
     printf("\n--- SALDO ATUAL ---\n");
     printf("R$ %.2f\n", saldo);
     printf("-------------------\n");
-    // system("pause");
 }
 
 void opcoes(int opcao, float saldo) {
+    limpar_cmd();
     switch (opcao)
     {
     case 0:
-        // Sair do programa
+        sair_programa();
         break;
     case 1:
-        // Consultar saldo
         consultar_saldo(saldo);
+        exibir_menu();
+        printf("Digite a opcao: ", opcao);
+        scanf("%d", &opcao);
+        opcoes(opcao, saldo);
         break;
     case 2:
-        // Realizar saque
         saldo = realizar_saque(saldo);
+        exibir_menu();
+        printf("Digite a opcao: ", opcao);
+        scanf("%d", &opcao);
+        opcoes(opcao, saldo);
         break;
     case 3:
-        // Realizar Depósito
         saldo = realizar_deposito(saldo);
+        exibir_menu();
+        printf("Digite a opcao: ", opcao);
+        scanf("%d", &opcao);
+        opcoes(opcao, saldo);
     default:
         break;
     }
@@ -96,4 +114,8 @@ float realizar_deposito(float saldo) {
         printf("Valor inválido\n");
     }
     return saldo;
+}
+
+void sair_programa() {
+    printf("Programa Encerrado");
 }
