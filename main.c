@@ -1,11 +1,9 @@
-void consultarSaldo(float saldo) {
-    printf("\n--- SALDO ATUAL ---\n");
-    printf("R$ %.2f\n", saldo);
-    printf("-------------------\n");
-    system("pause");
-}
 #include <stdio.h>
 #include <string.h>
+
+
+
+
 
 void limpar_cmd();
 int digitar_opcao();
@@ -45,4 +43,24 @@ void opcoes(int opcao, float saldo) {
     default:
         break;
     }
+}
+
+float realizar_deposito(float saldo) {
+    float valor;
+    printf("Digite o valor depositado: ");
+    scanf("%f", &valor);
+    if (ehPositivo(valor)) {
+        saldo += valor;
+        printf("Depósito realizado!\n");
+    } else {
+        printf("Valor inválido\n");
+    }
+    return saldo;
+}
+
+void consultarSaldo(float saldo) {
+    printf("\n--- SALDO ATUAL ---\n");
+    printf("R$ %.2f\n", saldo);
+    printf("-------------------\n");
+    system("pause");
 }
