@@ -1,0 +1,32 @@
+name: Atualizar Histórico de Commits no README
+
+on:
+  # Dispara a automação a cada novo commit enviado para a branch principal
+  push:
+    branches:
+      - main
+  # Permite que você rode a automação manualmente pela aba "Actions" se quiser
+  workflow_dispatch:
+
+# Garante permissão de escrita para que a Action possa modificar e salvar o README
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Faz o clone do seu repositório na máquina virtual do GitHub
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Busca todo o histórico (necessário para listar os commits)
+
+      # 2. Executa a Action que coleta os commits e atualiza o README
+      - name: Atualizar histórico no README
+        uses: gautamkrishnar/readme-commit-history-action@master
+        with:
+          # Token padrão do GitHub para autorizar a alteração no repositório
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          # Quantidade de commits que você quer exibir no histórico
+          max_commits: 30
